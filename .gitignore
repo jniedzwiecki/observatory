@@ -1,2 +1,14 @@
 *.class
 *.log
+target
+project
+src/main/resources/
+src/test/resources/
+.idea/
+assignment.sbt
+build.sbt
+capstone-ui.sbt
+capstone-ui/
+interaction.html
+interaction2.html
+scalastyle/
