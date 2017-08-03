@@ -7,13 +7,24 @@ import com.sksamuel.scrimage.{Image, Pixel}
   */
 object Visualization {
 
+  private val InvertedDistancePower: Int = 2
+  private val MinimumDistance: Int = 1
+  private val EarthRadius: Double = 6371
+
   /**
     * @param temperatures Known temperatures: pairs containing a location and the temperature at this location
     * @param location Location where to predict the temperature
     * @return The predicted temperature at `location`
     */
   def predictTemperature(temperatures: Iterable[(Location, Double)], location: Location): Double = {
-    ???
+    val closest: (Double, Double) = closestDistanceAndTemp(temperatures, location)
+
+    if (closest._1 < MinimumDistance) closest._2
+    else {
+      val weightTempSum: Double = temperatures.foldLeft(0.0)((acc, temp) => acc + invertedDistancePower(location, temp._1, InvertedDistancePower) * temp._2)
+      val weightSum: Double = temperatures.foldLeft(0.0)((acc, temp) => acc + invertedDistancePower(location, temp._1, InvertedDistancePower))
+      weightTempSum / weightSum
+    }
   }
 
   /**
@@ -34,5 +45,29 @@ object Visualization {
     ???
   }
 
+  private def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
+    temperatures.foldLeft((Double.MaxValue, Double.MaxValue))(
+      (currClosestDistanceAndTemp, pointAndTemp) => {
+        val d: Double = distance(location, pointAndTemp._1, EarthRadius)
+        if (d < currClosestDistanceAndTemp._1)
+          (d, pointAndTemp._2)
+        else
+          currClosestDistanceAndTemp
+      }
+    )
+  }
+
+  def invertedDistancePower(l1: Location, l2: Location, power: Int): Double = {
+    1 / math.pow(distance(l1, l2, EarthRadius), power)
+  }
+
+  def distance(l1: Location, l2: Location, radius: Double): Double = {
+    import math.acos
+    import math.sin
+    import math.cos
+    import math.abs
+
+    radius * acos(sin(l1.lat) * sin(l2.lat) + cos(l1.lat) * cos(l2.lat) * cos(abs(l1.lon - l2.lon)))
+  }
 }
 
