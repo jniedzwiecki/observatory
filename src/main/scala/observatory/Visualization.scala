@@ -45,7 +45,7 @@ object Visualization {
     ???
   }
 
-  private def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
+  def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
     temperatures.foldLeft((Double.MaxValue, Double.MaxValue))(
       (currClosestDistanceAndTemp, pointAndTemp) => {
         val d: Double = distance(location, pointAndTemp._1, EarthRadius)
@@ -66,8 +66,9 @@ object Visualization {
     import math.sin
     import math.cos
     import math.abs
+    import math.toRadians
 
-    radius * acos(sin(l1.lat) * sin(l2.lat) + cos(l1.lat) * cos(l2.lat) * cos(abs(l1.lon - l2.lon)))
+    radius * acos(sin(toRadians(l1.lat)) * sin(toRadians(l2.lat)) + cos(toRadians(l1.lat)) * cos(toRadians(l2.lat)) * cos(abs(toRadians(l1.lon) - toRadians(l2.lon))))
   }
 }
 
