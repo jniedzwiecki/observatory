@@ -38,4 +38,63 @@ trait VisualizationTest extends FunSuite with Checkers {
     assert(predictTemperature(locationTemp, Location(0, 0)) == 0)
   }
 
+  test("interpolate colors") {
+    import Visualization.interpolateColor
+
+    val color: Color = interpolateColor(
+      List(
+        (0, Color(0, 0, 0)),
+        (1, Color(100, 100, 100)),
+        (2, Color(200, 200, 200)),
+        (3, Color(300, 300, 300))
+      ),
+      1.2
+    )
+    assert(color.red == 120 && color.green == 120 && color.blue == 120)
+  }
+
+  test("interpolate colors exceed scale") {
+    import Visualization.interpolateColor
+
+    val color: Color = interpolateColor(
+      List(
+        (0, Color(0, 0, 0)),
+        (1, Color(100, 100, 100)),
+        (2, Color(200, 200, 200)),
+        (3, Color(300, 300, 300))
+      ),
+      3.2
+    )
+    assert(color.red == 300 && color.green == 300 && color.blue == 300)
+  }
+
+  test("interpolate colors exceed scale 2") {
+    import Visualization.interpolateColor
+
+    val color: Color = interpolateColor(
+      List(
+        (0, Color(0, 0, 0)),
+        (1, Color(100, 100, 100)),
+        (2, Color(200, 200, 200)),
+        (3, Color(300, 300, 300))
+      ),
+      -0.5
+    )
+    assert(color.red == 0 && color.green == 0 && color.blue == 0)
+  }
+
+  test("interpolate colors 2") {
+    import Visualization.interpolateColor
+
+    val color: Color = interpolateColor(
+      List(
+        (0, Color(0, 0, 0)),
+        (1, Color(100, 100, 100)),
+        (2, Color(200, 200, 200)),
+        (3, Color(300, 300, 300))
+      ),
+      3.0
+    )
+    assert(color.red == 300 && color.green == 300 && color.blue == 300)
+  }
 }
