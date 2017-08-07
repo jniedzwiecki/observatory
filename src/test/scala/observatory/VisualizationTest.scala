@@ -1,8 +1,13 @@
 package observatory
 
 
+import java.time.LocalDate
+
+import com.sksamuel.scrimage.Image
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
+
+import scala.math.Pi
 
 trait VisualizationTest extends FunSuite with Checkers {
 
@@ -96,5 +101,54 @@ trait VisualizationTest extends FunSuite with Checkers {
       3.0
     )
     assert(color.red == 300 && color.green == 300 && color.blue == 300)
+  }
+
+  test("visualize") {
+    import Visualization.visualize
+
+    val locations: List[(Location, Double)] = List(
+      (Location(-Pi / 2, - Pi / 2), -27),
+      (Location(-Pi / 4, - Pi / 4), -15),
+      (Location(0, 0), 0),
+      (Location(Pi / 4, Pi / 4), 12),
+      (Location(Pi / 2, Pi / 2), 32)
+    )
+
+    val colors: List[(Double, Color)] = List(
+      (60, Color(255, 255, 255)),
+      (32, Color(255, 0, 0)),
+      (12, Color(255, 255, 0)),
+      (0, Color(0, 255, 255)),
+      (-15, Color(0, 0, 255)),
+      (-27, Color(255, 0, 255)),
+      (-50, Color(33, 0, 107)),
+      (-60, Color(0, 0, 0))
+    )
+
+    val image: Image = visualize(locations, colors)
+    image.output("d1.png")
+  }
+
+  test("visualize2") {
+    import Visualization.visualize
+
+    val locations: List[(Location, Double)] = List(
+      (Location(- Pi / 2, - Pi / 2), 60),
+      (Location(Pi / 2, Pi / 2), -60)
+    )
+
+    val colors: List[(Double, Color)] = List(
+      (60, Color(255, 255, 255)),
+      (32, Color(255, 0, 0)),
+      (12, Color(255, 255, 0)),
+      (0, Color(0, 255, 255)),
+      (-15, Color(0, 0, 255)),
+      (-27, Color(255, 0, 255)),
+      (-50, Color(33, 0, 107)),
+      (-60, Color(0, 0, 0))
+    )
+
+    val image: Image = visualize(locations, colors)
+    image.output("d2.png")
   }
 }

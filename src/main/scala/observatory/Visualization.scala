@@ -1,9 +1,6 @@
 package observatory
 
-import java.awt.image.BufferedImage
-
-import com.sksamuel.scrimage.{Image, ImageMetadata, Pixel}
-import com.sun.javafx.iio.ImageStorage.ImageType
+import com.sksamuel.scrimage.{Image, Pixel}
 
 import scala.collection.immutable
 
@@ -15,6 +12,9 @@ object Visualization {
   private val InvertedDistancePower: Int = 2
   private val MinimumDistance: Int = 1
   private val EarthRadius: Double = 6371
+  var Width: Int = 360
+  var Height: Int = 180
+
 
   /**
     * @param temperatures Known temperatures: pairs containing a location and the temperature at this location
@@ -38,15 +38,18 @@ object Visualization {
     * @return The color that corresponds to `value`, according to the color scale defined by `points`
     */
   def interpolateColor(points: Iterable[(Double, Color)], value: Double): Color = {
-    if (!points.exists { case (temp, _) => temp < value }) points.minBy(_._1)._2
-    else if (!points.exists { case (temp, _) => temp > value }) points.maxBy(_._1)._2
-    else {
-      val left: (Double, Color) = points.filter { case (temp, _) => temp <= value }.maxBy(_._1)
-      val right: (Double, Color) = points.filter { case (temp, _) => temp >= value }.minBy(_._1)
-      val red: Int = colorRatio((left._1, left._2.red), (right._1, right._2.red), value)
-      val green: Int = colorRatio((left._1, left._2.green), (right._1, right._2.green), value)
-      val blue: Int = colorRatio((left._1, left._2.blue), (right._1, right._2.blue), value)
-      Color(red, green, blue)
+    points.find { case (temp, _) => temp == value }.map(_._2).getOrElse {
+      if (!points.exists { case (temp, _) => temp < value }) points.minBy(_._1)._2
+      else if (!points.exists { case (temp, _) => temp > value }) points.maxBy(_._1)._2
+      else {
+        val left: (Double, Color) = points.filter { case (temp, _) => temp <= value }.maxBy(_._1)
+        val right: (Double, Color) = points.filter { case (temp, _) => temp >= value }.minBy(_._1)
+
+        val red: Int = colorRatio((left._1, left._2.red), (right._1, right._2.red), value)
+        val green: Int = colorRatio((left._1, left._2.green), (right._1, right._2.green), value)
+        val blue: Int = colorRatio((left._1, left._2.blue), (right._1, right._2.blue), value)
+        Color(red, green, blue)
+      }
     }
   }
 
@@ -56,14 +59,14 @@ object Visualization {
     * @return A 360×180 image where each pixel shows the predicted temperature at its location
     */
   def visualize(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)]): Image = {
-    val image: BufferedImage = new BufferedImage(360, 180, BufferedImage.TYPE_INT_RGB)
-    val pixels: immutable.IndexedSeq[Color] = for (j <- 0 to 179; i <- 0 to 359) yield
-      interpolateColor(colors, predictTemperature(temperatures, locationByPixel(i, j)))
-    val ints: immutable.IndexedSeq[Int] = pixels.map(colorToInt(_))
+    import math.toRadians
 
-    image.setRGB(0, 0, 360, 180, ints.toArray, 0, 0)
-
-    new Image(image, ImageMetadata.fromImage(image))
+    val pixels: immutable.IndexedSeq[Pixel] =
+      for (i <- (Height / 2) to (-Height / 2 + 1) by -1; j <- (-Width / 2) until  (Width / 2)) yield {
+        val color: Color = interpolateColor(colors, predictTemperature(temperatures, Location(toRadians(i), toRadians(j))))
+        Pixel.apply(color.red, color.green, color.blue, 0xFF)
+      }
+    Image.apply(Width, Height, pixels.toArray)
   }
 
   def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
@@ -83,11 +86,7 @@ object Visualization {
   }
 
   def distance(l1: Location, l2: Location, radius: Double): Double = {
-    import math.acos
-    import math.sin
-    import math.cos
-    import math.abs
-    import math.toRadians
+    import math._
 
     radius * acos(sin(toRadians(l1.lat)) * sin(toRadians(l2.lat)) + cos(toRadians(l1.lat)) * cos(toRadians(l2.lat)) * cos(abs(toRadians(l1.lon) - toRadians(l2.lon))))
   }
@@ -95,8 +94,12 @@ object Visualization {
   def colorRatio(left: (Double, Int), right: (Double, Int), value: Double): Int =
     math.round((left._2 * (right._1 - value) + right._2 * (value - left._1)) / (right._1 - left._1)).toInt
 
-  def locationByPixel(i: Int, j: Int): Location = ???
+  def colorToInt(color: Color): Int = {
+    val red: Int = (color.red << 16) & 0x00FF0000
+    val green: Int = (color.green << 8) & 0x0000FF00
+    val blue: Int = color.blue & 0x000000FF
 
-  def colorToInt(color: Color): Int = ???
+    0xFF000000 | red | green | blue
+  }
 }
 
