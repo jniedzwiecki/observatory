@@ -61,23 +61,20 @@ object Visualization {
     * @return A 360×180 image where each pixel shows the predicted temperature at its location
     */
   def visualize(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)]): Image = {
-    visualizeDimension(
-      temperatures,
-      colors,
-      (-Width / 2) until (Width / 2),
+    import math.toRadians
+
+    visualizeDimension(temperatures, colors,
       (Height / 2) to (-Height / 2 + 1) by -1,
-      Width,
-      Height
-    )
+      (-Width / 2) until (Width / 2),
+      Width, Height,
+      (i: Int, j: Int) => Location(toRadians(i), toRadians(j)))
   }
 
   def visualizeDimension(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)],
-                         lonRange: Range, latRange: Range, width: Int, height: Int): Image = {
-    import math.toRadians
-
+                         latRange: Range, lonRange: Range, width: Int, height: Int, location: (Int, Int) => Location): Image = {
     val pixels: immutable.IndexedSeq[Pixel] =
       for (i <- latRange; j <- lonRange) yield {
-        val color: Color = interpolateColor(colors, predictTemperature(temperatures, Location(toRadians(i), toRadians(j))))
+        val color: Color = interpolateColor(colors, predictTemperature(temperatures, location(i, j)))
         Pixel.apply(color.red, color.green, color.blue, 0xFF)
       }
     Image.apply(width, height, pixels.toArray)
