@@ -14,7 +14,11 @@ object Interaction {
     * @return The latitude and longitude of the top-left corner of the tile, as per http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
     */
   def tileLocation(zoom: Int, x: Int, y: Int): Location = {
-    ???
+    val tileCount: Double = math.pow(2.0, zoom)
+    val lon: Double = x / Math.pow(2.0, tileCount) * 360.0 - 180
+    val n: Double = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, tileCount)
+    val lat: Double = math.toDegrees(math.atan(math.sinh(n)))
+    Location(lat, lon)
   }
 
   /**
@@ -25,9 +29,9 @@ object Interaction {
     * @param y Y coordinate
     * @return A 256×256 image showing the contents of the tile defined by `x`, `y` and `zooms`
     */
-  def tile(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int): Image = {
-    ???
-  }
+  def tile(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int): Image = ???
+//    val location: Location = tileLocation(zoom, x, y)
+//    Visualization.visualize()
 
   /**
     * Generates all the tiles for zoom levels 0 to 3 (included), for all the given years.

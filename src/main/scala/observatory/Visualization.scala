@@ -1,5 +1,7 @@
 package observatory
 
+import javax.swing.text.html.HTMLWriter
+
 import com.sksamuel.scrimage.{Image, Pixel}
 
 import scala.collection.immutable
@@ -59,14 +61,26 @@ object Visualization {
     * @return A 360×180 image where each pixel shows the predicted temperature at its location
     */
   def visualize(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)]): Image = {
+    visualizeDimension(
+      temperatures,
+      colors,
+      (-Width / 2) until (Width / 2),
+      (Height / 2) to (-Height / 2 + 1) by -1,
+      Width,
+      Height
+    )
+  }
+
+  def visualizeDimension(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)],
+                         lonRange: Range, latRange: Range, width: Int, height: Int): Image = {
     import math.toRadians
 
     val pixels: immutable.IndexedSeq[Pixel] =
-      for (i <- (Height / 2) to (-Height / 2 + 1) by -1; j <- (-Width / 2) until  (Width / 2)) yield {
+      for (i <- latRange; j <- lonRange) yield {
         val color: Color = interpolateColor(colors, predictTemperature(temperatures, Location(toRadians(i), toRadians(j))))
         Pixel.apply(color.red, color.green, color.blue, 0xFF)
       }
-    Image.apply(Width, Height, pixels.toArray)
+    Image.apply(width, height, pixels.toArray)
   }
 
   def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
