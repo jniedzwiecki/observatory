@@ -15,14 +15,13 @@ trait InteractionTest extends FunSuite with Checkers {
     assert(tileLocation(2, 0, 0) == Location(85.05112877980659, -180.0))
     assert(tileLocation(3, 0, 0) == Location(85.05112877980659, -180.0))
 
-    assert(tileLocation(0, 1, 0) == Location(85.05112877980659, 0.0))
-    assert(tileLocation(0, 0, 1) == Location(0.0, -180.0))
-    assert(tileLocation(0, 1, 1) == Location(0.0, 0.0))
-    assert(tileLocation(0, 2, 2) == Location(-85.05112877980659,180.0))
+    assert(tileLocation(0, 1, 0) == Location(85.05112877980659, 180.0))
+    assert(tileLocation(0, 0, 1) == Location(-85.05112877980659, -180.0))
+    assert(tileLocation(0, 1, 1) == Location(-85.05112877980659, 180.0))
 
-    assert(tileLocation(1, 1, 0) == Location(85.05112877980659, -90.0))
-    assert(tileLocation(1, 0, 1) == Location(66.51326044311186, -180.0))
-    assert(tileLocation(1, 1, 1) == Location(66.51326044311186, -90.0))
+    assert(tileLocation(1, 1, 0) == Location(85.05112877980659, 0.0))
+    assert(tileLocation(1, 0, 1) == Location(0, -180.0))
+    assert(tileLocation(1, 1, 1) == Location(0, 0.0))
 
   }
 

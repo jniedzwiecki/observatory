@@ -20,7 +20,7 @@ object Interaction {
     val lon: Double = math.toRadians(x / count * 360.0 - 180)
     val n: Double = Math.PI - (2.0 * Math.PI * y) / count
     val lat: Double = math.atan(math.sinh(n))
-    Location(lat, lon)
+    Location(math.toDegrees(lat), math.toDegrees(lon))
   }
 
   /**
@@ -36,7 +36,7 @@ object Interaction {
   }
 
   def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
-    val pixelLocation = (i: Int, j: Int) => tileLocation(zoom + 8, i, j)
+    val pixelLocation = (i: Int, j: Int) => Some(tileLocation(zoom + 8, i, j)).map(l => Location(math.toRadians(l.lat), math.toRadians(l.lon))).get
 
     Visualization.visualizeDim(temperatures, colors,
       pixelLatRange(parentOffset(zoom, y), dim),
