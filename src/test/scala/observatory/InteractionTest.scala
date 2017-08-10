@@ -23,10 +23,11 @@ trait InteractionTest extends FunSuite with Checkers {
     assert(tileLocation(1, 1, 0) == Location(85.05112877980659, -90.0))
     assert(tileLocation(1, 0, 1) == Location(66.51326044311186, -180.0))
     assert(tileLocation(1, 1, 1) == Location(66.51326044311186, -90.0))
+
   }
 
   test("tile zoom 0") {
-    import Interaction.tile
+    import Interaction.tileDim
 
     val colors: List[(Double, Color)] = List(
       (60, Color(255, 255, 255)),
@@ -40,16 +41,10 @@ trait InteractionTest extends FunSuite with Checkers {
     )
 
     val locations: List[(Location, Double)] = List(
-      (Location(- Pi / 2, - Pi / 2), 60),
-      (Location(- Pi / 2 + 0.001, - Pi / 2), -60)
+      (Location(Pi / 4, - Pi / 2), 60),
+      (Location(- Pi / 4, Pi / 2), -60)
     )
-//    val locations: List[(Location, Double)] = List(
-//      (Location(Pi / 4, - Pi / 2), -60),
-//      (Location(- Pi / 4, - Pi / 2), -60),
-//      (Location(Pi / 4, Pi / 2), -60),
-//      (Location(- Pi / 4, Pi / 2), -60)
-//    )
 
-    tile(locations, colors, 0, 0, 0).output("tile00.png")
+    tileDim(locations, colors, 0, 0, 0, 256).output("tile00.png")
   }
 }

@@ -16,10 +16,10 @@ object Interaction {
     * @return The latitude and longitude of the top-left corner of the tile, as per http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
     */
   def tileLocation(zoom: Int, x: Int, y: Int): Location = {
-    val tileCount: Double = math.pow(2.0, zoom)
-    val lon: Double = x / Math.pow(2.0, tileCount) * 360.0 - 180
-    val n: Double = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, tileCount)
-    val lat: Double = math.toDegrees(math.atan(math.sinh(n)))
+    val count: Double = math.pow(2.0, zoom)
+    val lon: Double = math.toRadians(x / count * 360.0 - 180)
+    val n: Double = Math.PI - (2.0 * Math.PI * y) / count
+    val lat: Double = math.atan(math.sinh(n))
     Location(lat, lon)
   }
 
@@ -36,11 +36,24 @@ object Interaction {
   }
 
   def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
+    val pixelLocation = (i: Int, j: Int) => tileLocation(zoom + 8, i, j)
+
     Visualization.visualizeDim(temperatures, colors,
-      new Range((x + 1) * dim, x * dim, -1),
-      new Range(y * dim, (y + 1) * dim, 1),
-      dim, dim, (i: Int, j: Int) => tileLocation(zoom + 8, i, j))
+      pixelLatRange(parentOffset(zoom, y), dim),
+      pixelLonRange(parentOffset(zoom, x), dim),
+      dim, dim,
+      (i: Int, j: Int) => pixelLocation(i, j))
   }
+
+  def pixelLonRange(parentUpperLeftX: Int, dim: Int): Range = {
+    new Range(parentUpperLeftX * dim, (parentUpperLeftX + 1) * dim, 1)
+  }
+
+  def pixelLatRange(parentUpperLeftY: Int, dim: Int): Range = {
+    new Range((parentUpperLeftY + 1) * dim, parentUpperLeftY * dim, -1)
+  }
+
+  def parentOffset(zoom: Int, parentCoordinate: Int) = parentCoordinate * TileSize
 
   /**
     * Generates all the tiles for zoom levels 0 to 3 (included), for all the given years.

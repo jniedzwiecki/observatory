@@ -8,13 +8,14 @@ import scala.collection.immutable
   * 2nd milestone: basic visualization
   */
 object Visualization {
-
   private val InvertedDistancePower: Int = 2
+
   private val MinimumDistance: Int = 1
   private val EarthRadius: Double = 6371
   var Width: Int = 360
   var Height: Int = 180
 
+  val Alpha = 0x7F
 
   /**
     * @param temperatures Known temperatures: pairs containing a location and the temperature at this location
@@ -68,14 +69,23 @@ object Visualization {
       (i: Int, j: Int) => Location(toRadians(i), toRadians(j)))
   }
 
-  def visualizeDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)],
-                   latRange: Range, lonRange: Range, width: Int, height: Int, location: (Int, Int) => Location): Image = {
+  def visualizeDim(temperatures: Iterable[(Location, Double)],
+                   colors: Iterable[(Double, Color)],
+                   pixelLatRange: Range,
+                   pixelLonRange: Range,
+                   width: Int, height: Int,
+                   pixelLocation: (Int, Int) => Location): Image = {
     val pixels: immutable.IndexedSeq[Pixel] =
-      for (i <- latRange; j <- lonRange) yield {
-        val color: Color = interpolateColor(colors, predictTemperature(temperatures, location(i, j)))
-        Pixel.apply(color.red, color.green, color.blue, 0xFF)
-      }
+      for (i <- pixelLatRange; j <- pixelLonRange) yield pixel(temperatures, colors, pixelLocation(j, i))
+
     Image.apply(width, height, pixels.toArray)
+  }
+
+  private def pixel(temperatures: Iterable[(Location, Double)],
+                    colors: Iterable[(Double, Color)],
+                    location: Location) = {
+    val color: Color = interpolateColor(colors, predictTemperature(temperatures, location))
+    Pixel.apply(color.red, color.green, color.blue, Alpha)
   }
 
   def closestDistanceAndTemp(temperatures: Iterable[(Location, Double)], location: Location): (Double, Double) = {
