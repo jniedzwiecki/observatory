@@ -7,7 +7,7 @@ import com.sksamuel.scrimage.Image
   */
 object Interaction {
 
-  val Dim = 256
+  val TileSize = 256
 
   /**
     * @param zoom Zoom level
@@ -32,7 +32,7 @@ object Interaction {
     * @return A 256×256 image showing the contents of the tile defined by `x`, `y` and `zooms`
     */
   def tile(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int): Image = {
-    tileDim(temperatures, colors, zoom, x, y, Dim)
+    tileDim(temperatures, colors, zoom, x, y, TileSize)
   }
 
   def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
@@ -40,7 +40,7 @@ object Interaction {
       new Range((x + 1) * dim, x * dim, -1),
       new Range(y * dim, (y + 1) * dim, 1),
       dim, dim, (i: Int, j: Int) => tileLocation(zoom + 8, i, j))
-§  }
+  }
 
   /**
     * Generates all the tiles for zoom levels 0 to 3 (included), for all the given years.
