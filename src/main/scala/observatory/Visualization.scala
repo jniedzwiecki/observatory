@@ -1,7 +1,5 @@
 package observatory
 
-import javax.swing.text.html.HTMLWriter
-
 import com.sksamuel.scrimage.{Image, Pixel}
 
 import scala.collection.immutable
@@ -63,15 +61,15 @@ object Visualization {
   def visualize(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)]): Image = {
     import math.toRadians
 
-    visualizeDimension(temperatures, colors,
+    visualizeDim(temperatures, colors,
       (Height / 2) to (-Height / 2 + 1) by -1,
       (-Width / 2) until (Width / 2),
       Width, Height,
       (i: Int, j: Int) => Location(toRadians(i), toRadians(j)))
   }
 
-  def visualizeDimension(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)],
-                         latRange: Range, lonRange: Range, width: Int, height: Int, location: (Int, Int) => Location): Image = {
+  def visualizeDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)],
+                   latRange: Range, lonRange: Range, width: Int, height: Int, location: (Int, Int) => Location): Image = {
     val pixels: immutable.IndexedSeq[Pixel] =
       for (i <- latRange; j <- lonRange) yield {
         val color: Color = interpolateColor(colors, predictTemperature(temperatures, location(i, j)))

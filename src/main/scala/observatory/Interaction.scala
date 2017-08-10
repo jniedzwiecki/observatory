@@ -32,11 +32,15 @@ object Interaction {
     * @return A 256×256 image showing the contents of the tile defined by `x`, `y` and `zooms`
     */
   def tile(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int): Image = {
-    Visualization.visualizeDimension(temperatures, colors,
-      new Range((x + 1) * Dim, x * Dim, -1),
-      new Range(y * Dim, (y + 1) * Dim, 1),
-      Dim, Dim, (i: Int, j: Int) => tileLocation(zoom + 8, i, j))
+    tileDim(temperatures, colors, zoom, x, y, Dim)
   }
+
+  def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
+    Visualization.visualizeDim(temperatures, colors,
+      new Range((x + 1) * dim, x * dim, -1),
+      new Range(y * dim, (y + 1) * dim, 1),
+      dim, dim, (i: Int, j: Int) => tileLocation(zoom + 8, i, j))
+§  }
 
   /**
     * Generates all the tiles for zoom levels 0 to 3 (included), for all the given years.
