@@ -2,7 +2,6 @@ package observatory
 
 import java.time.LocalDate
 
-import scala.collection.immutable
 import scala.io.Source
 
 /**
@@ -18,27 +17,38 @@ object Extraction {
     * @return A sequence containing triplets (date, location, temperature)
     */
   def locateTemperatures(year: Int, stationsFile: String, temperaturesFile: String): Iterable[(LocalDate, Location, Double)] = {
-    def stations = Source.fromURL(getClass.getResource(stationsFile)).getLines()
-    def temperatures = Source.fromURL(getClass.getResource(temperaturesFile)).getLines()
+    def stations: List[String] = Source.fromURL(getClass.getResource(stationsFile)).getLines().toList
+    def temperatures: List[String] = Source.fromURL(getClass.getResource(temperaturesFile)).getLines().toList
 
+    locateTemperatures(year, stations, temperatures)
+  }
+
+
+  def locateTemperatures(year: Int, stations: List[String], temperatures: List[String]): Iterable[(LocalDate, Location, Double)] = {
     temperatures.map(_.split(',')).map {
       case Array(stn: String, wban: String, month: String, day: String, temp: String) => (
         LocalDate.of(year, month.toInt, day.toInt),
-        stationLocationByStnOrWban(stations.toList, strToOptStr(stn), strToOptStr(wban)).map {
+        stationLocationByStnOrWban(stations, strToOptStr(stn), strToOptStr(wban)).map {
           case (lat, lon) => Location(lat.toDouble, lon.toDouble)
         },
         temp.toDouble
       )
-    }.map { case (date, location, temp) => if (location.isDefined) Some((date, location.get, temp)) else None }.flatten.toList
+    }.flatMap { case (date, location, temp) => if (location.isDefined) Some((date, location.get, toCelsius(temp))) else None }
   }
 
+  def toCelsius(fahrenheitTemp: Double) = (fahrenheitTemp - 32) * 5 / 9
+
   def stationLocationByStnOrWban(stations: List[String], stn: Option[String], wban: Option[String]): Option[(Double, Double)] = {
-    val station: Option[Array[String]] = stn.flatMap(_stn => stations.find(_.contains(_stn))).orElse(stations.find(s => s.contains(wban))).map(_.split(','))
-    val maybeTuple: Option[(Double, Double)] = station.flatMap {
+    val station: Option[Array[String]] =
+    stations.map(_.split(",", -1))
+      .find(l => l(0).equals(stn.getOrElse(""))
+    && l(1).equals(wban.getOrElse(""))
+    && l(2).length > 0
+    && l(3).length > 0)
+    station.flatMap {
       case Array(_, _, lat: String, lon: String) => Some((lat.toDouble, lon.toDouble))
       case _ => None
     }
-    maybeTuple
   }
 
   /**
