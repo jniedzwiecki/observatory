@@ -1,8 +1,6 @@
 package observatory
 
 
-import java.time.LocalDate
-
 import com.sksamuel.scrimage.Image
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
@@ -41,6 +39,8 @@ trait VisualizationTest extends FunSuite with Checkers {
     val locationTemp: List[(Location, Double)] = locations.zip(List(-10.0, 10.0))
 
     assert(predictTemperature(locationTemp, Location(0, 0)) == 0)
+    assert(predictTemperature(locationTemp, Location(0, - Pi / 4)) == -8.00000000000012)
+    assert(predictTemperature(locationTemp, Location(0, Pi / 4)) == 8.00000000000012)
   }
 
   test("interpolate colors") {

@@ -43,8 +43,8 @@ object Visualization {
       if (!points.exists { case (temp, _) => temp < value }) points.minBy(_._1)._2
       else if (!points.exists { case (temp, _) => temp > value }) points.maxBy(_._1)._2
       else {
-        val left: (Double, Color) = points.filter { case (temp, _) => temp <= value }.maxBy(_._1)
-        val right: (Double, Color) = points.filter { case (temp, _) => temp >= value }.minBy(_._1)
+        val left: (Double, Color) = points.filter { case (temp, _) => temp < value }.maxBy(_._1)
+        val right: (Double, Color) = points.filter { case (temp, _) => temp > value }.minBy(_._1)
 
         val red: Int = colorRatio((left._1, left._2.red), (right._1, right._2.red), value)
         val green: Int = colorRatio((left._1, left._2.green), (right._1, right._2.green), value)
