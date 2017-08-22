@@ -151,4 +151,53 @@ trait VisualizationTest extends FunSuite with Checkers {
     val image: Image = visualize(locations, colors)
     image.output("d2.png")
   }
+
+  test("one point test") {
+    import Visualization.visualize
+
+    val locations: List[(Location, Double)] = List(
+      (Location(Pi / 2, Pi / 2), -31)
+    )
+
+    val colors: List[(Double, Color)] = List(
+      (60, Color(255, 255, 255)),
+      (32, Color(255, 0, 0)),
+      (12, Color(255, 255, 0)),
+      (0, Color(0, 255, 255)),
+      (-15, Color(0, 0, 255)),
+      (-27, Color(255, 0, 255)),
+      (-50, Color(33, 0, 107)),
+      (-60, Color(0, 0, 0))
+    )
+
+    val image: Image = visualize(locations, colors)
+    image.pixel(0, 0).red == 255
+    image.pixel(0, 0).green == 0
+    image.pixel(0, 0).blue == 0
+    image.output("raz.png")
+  }
+
+  test("worst") {
+    import Visualization.visualize
+    import math.toRadians
+
+    val locations: List[(Location, Double)] = List(
+      (Location(45.0, -90.0), 88.95301869434877),
+      (Location(-45.0, 0.0), -42.759401365885516)
+    )
+
+    val colors: List[(Double, Color)] = List(
+      (60, Color(255, 255, 255)),
+      (32, Color(255, 0, 0)),
+      (12, Color(255, 255, 0)),
+      (0, Color(0, 255, 255)),
+      (-15, Color(0, 0, 255)),
+      (-27, Color(255, 0, 255)),
+      (-50, Color(33, 0, 107)),
+      (-60, Color(0, 0, 0))
+    )
+
+    val image: Image = visualize(locations, colors)
+    image.output("worst.png")
+  }
 }

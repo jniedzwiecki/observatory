@@ -38,8 +38,6 @@ object Extraction {
 
   def toCelsius(fahrenheitTemp: Double) = (fahrenheitTemp - 32.0) * 5.0 / 9.0
 
-  def toFahrenheit(celsiusTemp: Double) = celsiusTemp * 9.0 / 5.0 + 32.0
-
   def stationLocationByStnOrWban(stations: List[String], stn: Option[String], wban: Option[String]): Option[(Double, Double)] = {
     val station: Option[Array[String]] =
     stations.map(_.split(",", -1))
