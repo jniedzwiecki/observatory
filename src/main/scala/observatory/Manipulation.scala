@@ -19,8 +19,11 @@ object Manipulation {
     *                      is a collection of pairs of location and temperature)
     * @return A function that, given a latitude and a longitude, returns the average temperature at this location
     */
-  def average(temperaturess: Iterable[Iterable[(Location, Double)]]): (Int, Int) => Double = {
-    ???
+  def average(temperaturess: Iterable[Iterable[(Location, Double)]]): (Int, Int) => Double = {(Location(lat, lon))
+    val locationToTemp: Map[Location, Double] = temperaturess.flatten.groupBy(_._1).map {
+      case (location, temperatures) => (location, temperatures.map(_._2).sum / temperatures.size)
+    }
+    (lat: Int, lon: Int) => locationToTemp(Location(lat, lon))
   }
 
   /**
