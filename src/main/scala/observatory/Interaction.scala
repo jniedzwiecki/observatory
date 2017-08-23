@@ -36,24 +36,14 @@ object Interaction {
   }
 
   def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
-    val pixelLocation = (i: Int, j: Int) => Some(tileLocation(zoom + 8, i, j)).map(l => Location(math.toRadians(l.lat), math.toRadians(l.lon))).get
+    val pixelLocation = (i: Int, j: Int) => Some(tileLocation(zoom + 8, j + x * dim, (y + 1) * dim - i)).map(l => Location(l.lat, l.lon)).get
 
     Visualization.visualizeDim(temperatures, colors,
-      pixelLatRange(parentOffset(zoom, y), dim),
-      pixelLonRange(parentOffset(zoom, x), dim),
+      new Range(dim, 0, -1),
+      new Range(0, dim, 1),
       dim, dim,
-      (i: Int, j: Int) => pixelLocation(i, j))
+      pixelLocation)
   }
-
-  def pixelLonRange(parentUpperLeftX: Int, dim: Int): Range = {
-    new Range(parentUpperLeftX * dim, (parentUpperLeftX + 1) * dim, 1)
-  }
-
-  def pixelLatRange(parentUpperLeftY: Int, dim: Int): Range = {
-    new Range((parentUpperLeftY + 1) * dim, parentUpperLeftY * dim, -1)
-  }
-
-  def parentOffset(zoom: Int, parentCoordinate: Int) = parentCoordinate * TileSize
 
   /**
     * Generates all the tiles for zoom levels 0 to 3 (included), for all the given years.
