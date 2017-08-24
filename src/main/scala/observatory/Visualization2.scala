@@ -25,7 +25,10 @@ object Visualization2 {
     d10: Double,
     d11: Double
   ): Double = {
-    ???
+    val x0 = (1 - x) * d00 + x * d10
+    val x1 = (1 - x) * d01 + x * d11
+
+    (1 - y) * x0 + y * x1
   }
 
   /**
