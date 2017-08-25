@@ -37,4 +37,15 @@ trait Visualization2Test extends FunSuite with Checkers {
     val image = Visualization2.visualizeGrid(grid, colors, 0, 0, 0)
     image.output("visualization.png")
   }
+
+  test("grid") {
+    val locations: List[(Location, Double)] = List(
+      (Location(45.0, -90.0), 88.95301869434877),
+      (Location(-45.0, 0.0), -42.759401365885516)
+    )
+
+    val grid = Manipulation.makeGrid(locations)
+    val d = grid(20, 30)
+    print(d)
+  }
 }

@@ -13,12 +13,7 @@ object Manipulation {
     *         returns the predicted temperature at this location
     */
   def makeGrid(temperatures: Iterable[(Location, Double)]): (Int, Int) => Double = {
-    (lat: Int, lon: Int) => {
-      require((-89 to 90) contains lat, f"latitude outside the range: $lat")
-      require((-180 to 179) contains lon, f"longitude outside the range: $lon")
-      if (grid(lon + 180)(lat + 90).isEmpty) grid(lon + 180)(lat + 90) = Some(Visualization.predictTemperature(temperatures, Location(lat, lon)))
-      grid(lon + 180)(lat + 90).get
-    }
+    (lat: Int, lon: Int) => Visualization.predictTemperature(temperatures, Location(lat, lon))
   }
 
   /**
