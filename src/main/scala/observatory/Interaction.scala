@@ -36,7 +36,7 @@ object Interaction {
   }
 
   def tileDim(temperatures: Iterable[(Location, Double)], colors: Iterable[(Double, Color)], zoom: Int, x: Int, y: Int, dim: Int): Image = {
-    val pixelLocation = (i: Int, j: Int) => Some(tileLocation(zoom + 8, i + x * dim, (y + 1) * dim - j)).map(l => Location(l.lat, l.lon)).get
+    val pixelLocation = (lat: Int, lon: Int) => Some(tileLocation(zoom + 8, lon + x * dim, (y + 1) * dim - lat)).map(l => Location(l.lat, l.lon)).get
 
     Visualization.visualizeDim(temperatures, colors,
       new Range(dim, 0, -1),

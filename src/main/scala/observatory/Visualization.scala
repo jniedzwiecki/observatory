@@ -64,7 +64,7 @@ object Visualization {
       (Height / 2) to (-Height / 2 + 1) by -1,
       (-Width / 2) until (Width / 2),
       Width, Height,
-      (i: Int, j: Int) => Location(i, j),
+      (lat: Int, lon: Int) => Location(lat, lon),
       location => predictTemperature(temperatures, location))
   }
 
@@ -76,8 +76,8 @@ object Visualization {
                    physicalPixelLocation: (Int, Int) => Location,
                    predictTemperature: (Location) => Double): Image = {
     val pixels: immutable.IndexedSeq[Pixel] =
-      for (j <- pixelLatRange; i <- pixelLonRange) yield
-        pixel(colors, physicalPixelLocation(i, j), predictTemperature)
+      for (lat <- pixelLatRange; lon <- pixelLonRange) yield
+        pixel(colors, physicalPixelLocation(lat, lon), predictTemperature)
 
     Image.apply(width, height, pixels.toArray)
   }
