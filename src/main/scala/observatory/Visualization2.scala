@@ -1,11 +1,17 @@
 package observatory
 
 import com.sksamuel.scrimage.{Image, Pixel}
+import observatory.Interaction.tileLocation
+import observatory.Visualization.pixel
+
+import scala.collection.immutable
 
 /**
   * 5th milestone: value-added information visualization
   */
 object Visualization2 {
+
+  val Dim = 256
 
   /**
     * @param x X coordinate between 0 and 1
@@ -46,7 +52,20 @@ object Visualization2 {
     x: Int,
     y: Int
   ): Image = {
-    ???
+    val pixelLocation = (i: Int, j: Int) => Some(tileLocation(zoom + 8, j + x * Dim, (y + 1) * Dim - i)).map(l => Location(l.lat, l.lon)).get
+    val predictTemperature =
+      (l: Location) => bilinearInterpolation(
+        l.lon - l.lon.toInt, l.lat - l.lat.toInt,
+        grid(l.lat.toInt, l.lon.toInt),
+        grid(l.lat.toInt + 1, l.lon.toInt),
+        grid(l.lat.toInt, l.lon.toInt + 1),
+        grid(l.lat.toInt + 1, l.lon.toInt + 1)
+      )
+
+    val pixels: immutable.IndexedSeq[Pixel] =
+      for (i <- 0 to Dim; j <- Dim to 0 by -1) yield pixel(colors, pixelLocation(i, j), predictTemperature)
+
+    Image.apply(Dim, Dim, pixels.toArray)
   }
 
 }

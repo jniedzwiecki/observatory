@@ -5,13 +5,20 @@ package observatory
   */
 object Manipulation {
 
+  val grid: Array[Array[Option[Double]]] = Array.ofDim[Option[Double]](360, 180)
+
   /**
     * @param temperatures Known temperatures
     * @return A function that, given a latitude in [-89, 90] and a longitude in [-180, 179],
     *         returns the predicted temperature at this location
     */
   def makeGrid(temperatures: Iterable[(Location, Double)]): (Int, Int) => Double = {
-    (lat: Int, lon: Int) => Visualization.predictTemperature(temperatures, Location(lat, lon))
+    (lat: Int, lon: Int) => {
+      require((-89 to 90) contains lat, "latitude outside the range")
+      require((-180 to 179) contains lon, "longitude outside the range")
+      if (grid(lon + 180)(lat + 90).isEmpty) grid(lon + 180)(lat + 90) = Some(Visualization.predictTemperature(temperatures, Location(lat, lon)))
+      grid(lon + 180)(lat + 90).get
+    }
   }
 
   /**

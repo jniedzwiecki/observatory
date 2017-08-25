@@ -42,7 +42,8 @@ object Interaction {
       new Range(dim, 0, -1),
       new Range(0, dim, 1),
       dim, dim,
-      pixelLocation)
+      pixelLocation,
+      location => Visualization.predictTemperature(temperatures, location))
   }
 
   /**
