@@ -73,19 +73,19 @@ object Visualization {
                    pixelLatRange: Range,
                    pixelLonRange: Range,
                    width: Int, height: Int,
-                   pixelLocation: (Int, Int) => Location,
+                   physicalPixelLocation: (Int, Int) => Location,
                    predictTemperature: (Location) => Double): Image = {
     val pixels: immutable.IndexedSeq[Pixel] =
-      for (i <- pixelLatRange; j <- pixelLonRange) yield
-        pixel(colors, pixelLocation(i, j), predictTemperature)
+      for (j <- pixelLatRange; i <- pixelLonRange) yield
+        pixel(colors, physicalPixelLocation(i, j), predictTemperature)
 
     Image.apply(width, height, pixels.toArray)
   }
 
   def pixel(colors: Iterable[(Double, Color)],
-                    location: Location,
-                    predictTemperature: (Location) => Double) = {
-    val color: Color = interpolateColor(colors, predictTemperature(location))
+            physicalLocation: Location,
+            predictTemperature: (Location) => Double): Pixel = {
+    val color: Color = interpolateColor(colors, predictTemperature(physicalLocation))
     Pixel.apply(color.red, color.green, color.blue, Alpha)
   }
 
