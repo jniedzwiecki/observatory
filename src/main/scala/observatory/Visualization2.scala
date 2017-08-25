@@ -53,7 +53,7 @@ object Visualization2 {
     y: Int
   ): Image = {
 
-    val physicalPixelLocation = (i: Int, j: Int) => tileLocation(zoom + 8, i + x * Dim, y * Dim + j)
+    val physicalPixelLocation = (i: Int, j: Int) => tileLocation(zoom + 8, i + x * Dim, j + y * Dim)
 
     val predictTemperature =
       (l: Location) => bilinearInterpolation(
@@ -65,7 +65,7 @@ object Visualization2 {
       )
 
     val pixels: immutable.IndexedSeq[Pixel] =
-      for (i <- 0 until Dim; j <- 0 until Dim) yield pixel(colors, physicalPixelLocation(i, j), predictTemperature)
+      for (j <- 0 until Dim; i <- 0 until Dim) yield pixel(colors, physicalPixelLocation(i, j), predictTemperature)
 
     Image.apply(Dim, Dim, pixels.toArray)
   }
