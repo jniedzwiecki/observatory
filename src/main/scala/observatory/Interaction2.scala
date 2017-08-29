@@ -1,23 +1,46 @@
 package observatory
 
+import observatory.LayerName.{Deviations, Temperatures}
+
 /**
   * 6th (and last) milestone: user interface polishing
   */
 object Interaction2 {
 
+  val temperaturesColors: List[(Double, Color)] = List(
+    (60, Color(255, 255, 255)),
+    (32, Color(255, 0, 0)),
+    (12, Color(255, 255, 0)),
+    (0, Color(0, 255, 255)),
+    (-15, Color(0, 0, 255)),
+    (-27, Color(255, 0, 255)),
+    (-50, Color(33, 0, 107)),
+    (-60, Color(0, 0, 0))
+  )
+
+  val deviationsColors: List[(Double, Color)] = List(
+    (7, Color(0, 0, 0)),
+    (4, Color(255, 0, 0)),
+    (2, Color(255, 255, 0)),
+    (0, Color(255, 255, 255)),
+    (-2, Color(0, 255, 255)),
+    (-7, Color(0, 0, 255))
+  )
+
   /**
     * @return The available layers of the application
     */
-  def availableLayers: Seq[Layer] = {
-    ???
-  }
+  def availableLayers: Seq[Layer] = List(
+    Layer(Temperatures, temperaturesColors, 1975 to 2015),
+    Layer(Deviations, deviationsColors, 1990 to 2015)
+  )
 
   /**
     * @param selectedLayer A signal carrying the layer selected by the user
     * @return A signal containing the year bounds corresponding to the selected layer
     */
   def yearBounds(selectedLayer: Signal[Layer]): Signal[Range] = {
-    ???
+    Signal(selectedLayer().bounds)
   }
 
   /**
