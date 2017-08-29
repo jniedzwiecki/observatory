@@ -6,7 +6,7 @@ object Main extends App {
 
   override def main(args: Array[String]): Unit = {
     val averageTemperatures: immutable.IndexedSeq[Iterable[(Location, Double)]] =
-      for (year <- 1975 to 1975) yield
+      for (year <- 1975 to 1989) yield
         Extraction.locateTemperatures(year, "/stations.csv", f"/$year.csv")
           .map { case (date, location, temp) => (location, temp) }
 
