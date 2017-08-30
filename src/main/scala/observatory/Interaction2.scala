@@ -65,7 +65,7 @@ object Interaction2 {
     * @return The URL pattern to retrieve tiles
     */
   def layerUrlPattern(selectedLayer: Signal[Layer], selectedYear: Signal[Int]): Signal[String] = {
-    ???
+    Signal("target/" + selectedLayer().layerName.id + "/" + selectedYear())
   }
 
   /**
@@ -74,7 +74,7 @@ object Interaction2 {
     * @return The caption to show
     */
   def caption(selectedLayer: Signal[Layer], selectedYear: Signal[Int]): Signal[String] = {
-    ???
+    Signal(selectedLayer().layerName.id.capitalize + f" (${selectedYear.apply()})")
   }
 
 }
